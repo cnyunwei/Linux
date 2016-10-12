@@ -1,0 +1,35 @@
+#!/bin/sh
+
+### BEGIN INIT INFO
+# Provides:  shadowsocks
+# Required-Start: $local_fs $remote_fs $network $syslog
+# Required-Stop: $local_fs $remote_fs $network $syslog
+# Default-Start: 2 3 4 5
+# Default-Stop:
+# Short-Description: starts the shadow socks service
+### END INIT INFO
+
+PATH=$PATH:/usr/local/bin/
+DAEMON=/usr/bin/ssserver
+CONF_FILE=/etc/shadowsocks.json
+
+case $1 in
+  start)
+    echo "Starting Shadow Socks local"
+          $DAEMON -c $CONF_FILE -d start
+      ;;
+  stop)
+    echo "Stopping Shadow Socks local"
+      $DAEMON -c $CONF_FILE -d stop
+      ;;
+  restart|force-reload)
+    $0 stop && sleep 2 && $0 start
+      ;;
+  reload)
+    exit 3
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart|force-reload|reload}"
+    exit 2
+    ;;
+esac
