@@ -23,6 +23,6 @@ sed -in s:"BASEDIR=/usr/local":"BASEDIR=/usr/local/zabbix":g /etc/rc.d/init.d/za
 
 chkconfig zabbix_agentd on
 service zabbix_agentd start
-#iptables -A INPUT -p tcp --dport 10050 -j ACCEPT
-#/etc/init.d/iptables save
+iptables -A INPUT -p tcp --dport 10050 -j ACCEPT
+/etc/init.d/iptables save
 echo -e "zabbix_agent installed successfully!"
