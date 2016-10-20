@@ -1,13 +1,14 @@
 #!/bin/bash
 #Change time 20160809 22:30 by Mr.Cui
 zabbix_dir=/usr/local/zabbix/
-
+zabbix_version=zabbix-3.0.4
 read  -p "please input the zabbix_server IP address:" SERVER
 echo ""
 #read  -p "please input the zabbix_server port:(default:10050)" PORT
 #echo ""
 #yum -y  install  make gcc gcc-c++
-
+tar zxf $zabbix_version.tar.gz
+cd $zabbix_version
 groupadd zabbix && useradd -r zabbix -g zabbix -s /sbin/nologin
 ./configure --prefix=$zabbix_dir --enable-agent
 make && make install
@@ -22,6 +23,6 @@ sed -in s:"BASEDIR=/usr/local":"BASEDIR=/usr/local/zabbix":g /etc/rc.d/init.d/za
 
 chkconfig zabbix_agentd on
 service zabbix_agentd start
-iptables -A INPUT -p tcp --dport 10050 -j ACCEPT
-/etc/init.d/iptables save
+#iptables -A INPUT -p tcp --dport 10050 -j ACCEPT
+#/etc/init.d/iptables save
 echo -e "zabbix_agent installed successfully!"
