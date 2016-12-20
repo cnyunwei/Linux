@@ -49,13 +49,15 @@ api_post() {
 # @param1: The domain to nslookup
 dns_lookup() {
     local server="180.76.76.76"
-    local os=`uname -n`
-    if [ "$os" = "ebs-23166" ]; then
+    local os=`uname -n` #通过获取主机名方式进行判断
+    if [ "$os" = "centos" ]; then
         nslookup ${1} $server | awk '/^Address: / { print $2 }'
     elif [ "$os" = "OpenWrt" ]; then
         nslookup ${1} $server | tr -d '\n[:blank:]' | sed 's/.\+1 \([0-9\.]\+\).*/\1/'
     fi
 }
+
+logfile=/var/log/dnspod.log
 
 # Update the DNS record
 # @param1: The domain name to update, for example, 'domain.tld'
@@ -64,10 +66,10 @@ dns_update() {
     local current_ip=$(get_ip)
     local dns_ip=$(dns_lookup "${2}.${1}")
 
-    echo "${current_ip} : ${dns_ip}"
+    echo "${current_ip} : ${dns_ip}" >>$logfile
 
     if [ "$current_ip" = "$dns_ip" ]; then
-	echo "No need to update DDNS."
+	echo "No need to update DDNS." >>$logfile
         return 0
     fi
 
@@ -85,7 +87,7 @@ dns_update() {
     result_message=$(echo $result | sed 's/.\+,"message":"\([^"]\+\)".\+/\1/')
 
     # Output
-    echo "Code: $result_code, Message: $result_message"
+    echo "Code: $result_code, Message: $result_message" >>$logfile
 }
 
 # User token
